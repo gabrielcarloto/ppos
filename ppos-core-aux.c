@@ -456,7 +456,10 @@ int sem_down (semaphore_t *s) {
   PPOS_PREEMPT_DISABLE;
   s->count--;
 
-  if (s->count >= 0) return 0;
+  if (s->count >= 0) {
+    PPOS_PREEMPT_ENABLE;
+    return 0;
+  }
 
   // ATENÇÃO: não manipular manualmente o s->taskQueue.
   // O queue_append espera que o primeiro elemento da fila seja nulo ou que o prev e o next sejam ele mesmo caso não existam outros elementos.
@@ -482,7 +485,10 @@ int sem_up (semaphore_t *s) {
   PPOS_PREEMPT_DISABLE;
   s->count++;
 
-  if (s->count > 0) return 0;
+  if (s->count > 0) {
+    PPOS_PREEMPT_ENABLE;
+    return 0;
+  }
 
   task_t *task = queue_remove(&s->taskQueue, s->taskQueue);
 
@@ -497,7 +503,10 @@ int sem_destroy (semaphore_t *s) {
 
   while (s->taskQueue) {
     task_resume(s->taskQueue);
-    s->taskQueue = s->taskQueue->next;
+
+    // aparentemente, o task_resume já atualiza a fila
+    // então isso aqui faz com que nem todas as tarefas sejam acordadas
+    /* s->taskQueue = s->taskQueue->next; */
   }
 
   return 1;

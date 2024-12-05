@@ -1,59 +1,58 @@
 Main INICIO
 Task A1 created...
 Task A2 created...
-
-
+Task B1 created...
 Iniciando: A1
 
-[000002] A1 zig (0)
+[000003] A1 zig (0)
 Iniciando:     A2
-Task B1 created...
-Task B2 created...
-Main waits for A1...
 
 Iniciando:                          B1
 
-[000004]                          B1 zag (0)
+[000005]                          B1 zag (0)
+Task B2 created...
+Main waits for A1...
+[000007]     A2 zig (0)
+[000007]                          B1 zag (1)
 Iniciando:                              B2
 
-[000005]     A2 zig (0)
-[000005]                              B2 zag (0)
-[000005] A1 zig (1)
-[000005]                          B1 zag (1)
-[000005]     A2 zig (1)
-[000006]                              B2 zag (1)
-[000006] A1 zig (2)
-[000006]                          B1 zag (2)
-[000006]     A2 zig (2)
-[000006]                              B2 zag (2)
-[000006] A1 zig (3)
-[000007]                          B1 zag (3)
-[000007]     A2 zig (3)
-[000007]                              B2 zag (3)
-[000007] A1 zig (4)
-[000007]                          B1 zag (4)
-[000008]     A2 zig (4)
-[000008]                              B2 zag (4)
-[000008] A1 zig (5)
-[000008]                          B1 zag (5)
-[000008]     A2 zig (5)
-[000009]                              B2 zag (5)
-[000009] A1 zig (6)
-[000009]                          B1 zag (6)
-[000009]     A2 zig (6)
-[000009]                              B2 zag (6)
-[000009] A1 zig (7)
-[000010]                          B1 zag (7)
-[000010]     A2 zig (7)
-[000010]                              B2 zag (7)
-[000010] A1 zig (8)
-[000010]                          B1 zag (8)
-[000011]     A2 zig (8)
-[000011]                              B2 zag (8)
-[000011] A1 zig (9)
-[000011]                          B1 zag (9)
-[000011]     A2 zig (9)Main waits for A2...
 
-[000012]                              B2 zag (9)Main waits for B1...
+[000008] A1 zig (1)
+[000009]                              B2 zag (0)
+[000009]     A2 zig (1)
+[000010]                          B1 zag (2)
+[000010] A1 zig (2)
+[000011]                              B2 zag (1)
+[000011]     A2 zig (2)
+[000012]                          B1 zag (3)
+[000012] A1 zig (3)
+[000013]                              B2 zag (2)
+[000013]     A2 zig (3)
+[000014]                          B1 zag (4)
+[000015] A1 zig (4)
+[000016]                              B2 zag (3)
+[000016]     A2 zig (4)
+[000017]                          B1 zag (5)
+[000017] A1 zig (5)
+[000017]                              B2 zag (4)
+[000018]     A2 zig (5)
+[000018]                          B1 zag (6)
+[000019] A1 zig (6)
+[000020]                              B2 zag (5)
+[000020]     A2 zig (6)
+[000020]                          B1 zag (7)
+[000021] A1 zig (7)
+[000021]                              B2 zag (6)
+[000021]     A2 zig (7)
+[000022]                          B1 zag (8)
+[000022] A1 zig (8)
+[000023]                              B2 zag (7)
+[000023]     A2 zig (8)
+[000023]                          B1 zag (9)
+[000024] A1 zig (9)
+[000024]                              B2 zag (8)
+[000024]     A2 zig (9)
+[000025]                              B2 zag (9)Main waits for A2...
+Main waits for B1...
 Main waits for B2...
 Main FIM
