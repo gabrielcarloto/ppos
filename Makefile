@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -ggdb
+CFLAGS = -Wall -ggdb
 
 OBJECTS_BASE=queue.o ppos-all.o 
 OBJECTS_DISK=disk-driver.o ppos-disk-manager.o

@@ -38,6 +38,7 @@ typedef struct sem_queue {
 
 // estrutura que define um semáforo
 typedef struct semaphore_t {
+  int locked;
   int count;
   task_t *taskQueue;
   int active;
