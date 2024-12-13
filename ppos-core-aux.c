@@ -415,30 +415,6 @@ diskrequest_t* disk_scheduler(diskrequest_t* queue) {
     return NULL;
 }
 
-sem_queue *sem_queue_init() {
-  sem_queue *q = (sem_queue *)malloc(sizeof(sem_queue));
-
-  if (q == NULL) return NULL;
-
-  q->task = NULL;
-  q->prev = NULL;
-  q->next = NULL;
-
-  return q;
-}
-
-void sem_queue_destroy(sem_queue *q) {
-  sem_queue *aux = NULL;
-
-  while (q) {
-    aux = q->next;
-    free(q);
-    q = aux;
-  }
-
-  free(q);
-}
-
 int sem_create (semaphore_t *s, int value) {
   PPOS_PREEMPT_DISABLE;
   s->count = value;
@@ -456,12 +432,10 @@ int sem_down (semaphore_t *s) {
   }
 
   PPOS_PREEMPT_DISABLE;
-  while(__sync_lock_test_and_set(&s->locked, 1));
 
   s->count--;
 
   if (s->count >= 0) {
-    __sync_lock_release(&s->locked);
     PPOS_PREEMPT_ENABLE;
     return 0;
   }
@@ -471,9 +445,10 @@ int sem_down (semaphore_t *s) {
   // Ou seja, pode manipular, desde que satisfaça essa condição.
   // Mas isso é chato, então só deixa assim. Beijos s2
   task_suspend(taskExec, &s->taskQueue);
-  __sync_lock_release(&s->locked);
 
   PPOS_PREEMPT_ENABLE;
+  // Aqui é o único lugar que mexe com a ready queue ACHO, então não faz muito sentido 
+  // o erro da fila se tornar nula apesar de ainda ter tarefas
   task_yield();
 
   if (s == NULL || !s->active) {
@@ -489,18 +464,15 @@ int sem_up (semaphore_t *s) {
   }
 
   PPOS_PREEMPT_DISABLE;
-  while(__sync_lock_test_and_set(&s->locked, 1));
 
   s->count++;
 
   if (s->count > 0) {
-    __sync_lock_release(&s->locked);
     PPOS_PREEMPT_ENABLE;
     return 0;
   }
 
   task_t *task = queue_remove(&s->taskQueue, s->taskQueue);
-  __sync_lock_release(&s->locked);
   PPOS_PREEMPT_ENABLE;
 
   task_resume(task);
