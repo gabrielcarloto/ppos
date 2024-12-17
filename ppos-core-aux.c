@@ -472,7 +472,7 @@ int sem_up (semaphore_t *s) {
     return 0;
   }
 
-  task_t *task = queue_remove(&s->taskQueue, s->taskQueue);
+  task_t *task = (task_t *)queue_remove((queue_t **)&s->taskQueue, (queue_t *)s->taskQueue);
   PPOS_PREEMPT_ENABLE;
 
   task_resume(task);
