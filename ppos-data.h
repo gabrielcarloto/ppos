@@ -30,15 +30,8 @@ typedef struct task_t {
 
 } task_t ;
 
-typedef struct sem_queue {
-  struct sem_queue *prev;
-  struct sem_queue *next;
-  task_t *task;
-} sem_queue;
-
 // estrutura que define um semáforo
 typedef struct semaphore_t {
-  int locked;
   int count;
   task_t *taskQueue;
   int active;
