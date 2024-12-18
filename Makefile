@@ -21,8 +21,12 @@ racecond: $(OBJECTS_BASE) $(SRC)
 	@echo "Compilando $@"
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS_BASE) $(SRC) ./pingpong-racecond.c
 
+racecond-test: racecond
+	./racecond
+
 %-test: %
 	./$< > $<.txt && diff ./pingpong-$<.txt $<.txt
+	@sleep 3
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
