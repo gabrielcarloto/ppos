@@ -26,6 +26,7 @@ racecond-test: racecond
 
 %-test: %
 	./$< > $<.txt && diff ./pingpong-$<.txt $<.txt
+	@echo "\033[0;32mSUCESSO\033[0m"
 	@sleep 3
 
 %.o: %.c
