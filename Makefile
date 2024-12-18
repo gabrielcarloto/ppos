@@ -7,6 +7,8 @@ SRC = ppos-core-aux.c
 
 all: semaphore mqueue racecond
 
+test: semaphore-test mqueue-test racecond-test
+
 semaphore: $(OBJECTS_BASE) $(SRC)
 	@echo "Compilando $@"
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS_BASE) $(SRC) ./pingpong-semaphore.c
@@ -18,6 +20,9 @@ mqueue: $(OBJECTS_BASE) $(SRC)
 racecond: $(OBJECTS_BASE) $(SRC)
 	@echo "Compilando $@"
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS_BASE) $(SRC) ./pingpong-racecond.c
+
+%-test: %
+	./$< > $<.txt && diff ./pingpong-$<.txt $<.txt
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@

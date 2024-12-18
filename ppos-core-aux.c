@@ -416,13 +416,11 @@ diskrequest_t* disk_scheduler(diskrequest_t* queue) {
 }
 
 int sem_create (semaphore_t *s, int value) {
-  PPOS_PREEMPT_DISABLE;
   s->count = value;
   s->taskQueue = NULL;
   // controle pq o ponteiro não ta no heap
   s->active = 1;
 
-  PPOS_PREEMPT_ENABLE;
   return 1;
 }
 
@@ -440,13 +438,16 @@ int sem_down (semaphore_t *s) {
     return 0;
   }
 
+  // Habilitar a preempção antes ou depois do task_suspend parece não fazer diferença.
+  // Talvez o próprio task_suspend faça isso, já que suspender uma tarefa é preemptar ela.
+  PPOS_PREEMPT_ENABLE;
+
   // ATENÇÃO: não manipular manualmente o s->taskQueue.
   // O queue_append espera que o primeiro elemento da fila seja nulo ou que o prev e o next sejam ele mesmo caso não existam outros elementos.
   // Ou seja, pode manipular, desde que satisfaça essa condição.
   // Mas isso é chato, então só deixa assim. Beijos s2
   task_suspend(taskExec, &s->taskQueue);
 
-  PPOS_PREEMPT_ENABLE;
   // Aqui é o único lugar que mexe com a ready queue ACHO, então não faz muito sentido 
   // o erro da fila se tornar nula apesar de ainda ter tarefas
   task_yield();
@@ -481,7 +482,6 @@ int sem_up (semaphore_t *s) {
 }
 
 int sem_destroy (semaphore_t *s) {
-  PPOS_PREEMPT_DISABLE;
   s->active = 0;
 
   while (s->taskQueue) {
@@ -492,6 +492,5 @@ int sem_destroy (semaphore_t *s) {
     /* s->taskQueue = s->taskQueue->next; */
   }
 
-  PPOS_PREEMPT_ENABLE;
   return 1;
 }
