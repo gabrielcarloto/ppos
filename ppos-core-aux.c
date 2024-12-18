@@ -415,11 +415,22 @@ diskrequest_t* disk_scheduler(diskrequest_t* queue) {
     return NULL;
 }
 
+void lock(semaphore_t *s) {
+  PPOS_PREEMPT_DISABLE;
+  /* while (__sync_lock_test_and_set(&s->lock, 1)); */
+}
+
+void unlock(semaphore_t *s) {
+  PPOS_PREEMPT_ENABLE;
+  /* __sync_lock_release(&s->lock); */
+}
+
 int sem_create (semaphore_t *s, int value) {
   s->count = value;
   s->taskQueue = NULL;
   // controle pq o ponteiro não ta no heap
   s->active = 1;
+  s->lock = 0;
 
   return 1;
 }
@@ -429,18 +440,17 @@ int sem_down (semaphore_t *s) {
     return -1;
   }
 
-  PPOS_PREEMPT_DISABLE;
-
+  lock(s);
   s->count--;
 
   if (s->count >= 0) {
-    PPOS_PREEMPT_ENABLE;
+    unlock(s);
     return 0;
   }
 
   // Habilitar a preempção antes ou depois do task_suspend parece não fazer diferença.
   // Talvez o próprio task_suspend faça isso, já que suspender uma tarefa é preemptar ela.
-  PPOS_PREEMPT_ENABLE;
+  unlock(s);
 
   // ATENÇÃO: não manipular manualmente o s->taskQueue.
   // O queue_append espera que o primeiro elemento da fila seja nulo ou que o prev e o next sejam ele mesmo caso não existam outros elementos.
@@ -464,18 +474,18 @@ int sem_up (semaphore_t *s) {
     return -1;
   }
 
-  PPOS_PREEMPT_DISABLE;
+  lock(s);
 
   s->count++;
 
   if (s->count > 0) {
-    PPOS_PREEMPT_ENABLE;
+    unlock(s);
     return 0;
   }
 
   task_t *task = (task_t *)queue_remove((queue_t **)&s->taskQueue, (queue_t *)s->taskQueue);
-  PPOS_PREEMPT_ENABLE;
 
+  unlock(s);
   task_resume(task);
 
   return 0;
