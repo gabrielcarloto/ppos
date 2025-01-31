@@ -2,12 +2,16 @@ CC = gcc
 CFLAGS = -Wall -ggdb
 
 OBJECTS_BASE=queue.o ppos-all.o 
-OBJECTS_DISK=disk-driver.o ppos-disk-manager.o
-SRC = ppos-core-aux.c 
+OBJECTS_DISK=disk-driver.o 
+SRC = ppos-core-aux.c ppos-disk-manager.c
 
-all: semaphore mqueue racecond
+all: disco1
 
 test: semaphore-test mqueue-test racecond-test
+
+disco1: $(OBJECTS_BASE) $(OBJECTS_DISK) $(SRC)
+	@echo "Compilando $@"
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS_BASE) $(OBJECTS_DISK) $(SRC) ./pingpong-disco1.c
 
 semaphore: $(OBJECTS_BASE) $(SRC)
 	@echo "Compilando $@"
@@ -23,6 +27,10 @@ racecond: $(OBJECTS_BASE) $(SRC)
 
 racecond-test: racecond
 	./racecond
+
+teste-disco: 
+	@echo "Compilando $@"
+	$(CC) $(CFLAGS) -o $@ ./teste-disco.c
 
 %-test: %
 	./$< > $<.txt && diff ./pingpong-$<.txt $<.txt
